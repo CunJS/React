@@ -7,7 +7,6 @@ class Board extends React.Component {
     this.state = {
       squares: Array(9).fill(""),
       player: "X",
-      end: false,
       winner: "",
       history: [
         {
@@ -50,7 +49,7 @@ class Board extends React.Component {
 
   // 切换玩家
   changePlayer(i) {
-    if (this.state.end) {
+    if (this.state.winner) {
       return;
     }
     let squares = [...this.state.squares];
@@ -75,14 +74,13 @@ class Board extends React.Component {
     if (winner) {
       this.setState({
         winner: winner.squares,
-        winnerArr: winner.winnerArr,
-        end: true,
+        winnerArr: winner.winnerArr
       });
     }
   }
   getClassName(index) {
-    let { end, winnerArr } = this.state;
-    if (end) {
+    let { winner, winnerArr } = this.state;
+    if (winner) {
       for (let i = 0; i < 3; i++) {
         if (winnerArr[i] === index) {
           return "winner-square";
@@ -96,7 +94,6 @@ class Board extends React.Component {
   backTo(i) {
     this.setState((state) => {
       return {
-        end: false,
         winner: "",
         squares: state.history[i].squares,
         player: state.history[i].player,
@@ -106,9 +103,9 @@ class Board extends React.Component {
   }
   // 每次数据更新都会触发执行
   render() {
-    let { player, squares, end, winner, history } = this.state;
+    let { player, squares, winner, history } = this.state;
     let title = "";
-    if (!end) {
+    if (!winner) {
       title = <p>Next player：{player}</p>;
     } else {
       title = <p>Winner is：{winner}</p>;
@@ -124,8 +121,7 @@ class Board extends React.Component {
                 <Square
                   changePlayer={() => this.changePlayer(index)}
                   key={index}
-                  value={el}
-                  index={index}
+                  player={el}
                   winnerClass={this.getClassName(index)}
                 />
               );
