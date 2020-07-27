@@ -41,8 +41,11 @@ class TodoList extends Component {
     );
   }
   handleChange = e => {
-    this.setState({
-      inputValue: e.target.value,
+    this.setState((e) => {
+      debugger
+      return {
+        inputValue: e.target.value,
+      }
     });
   };
   pushList = () => {
@@ -55,10 +58,17 @@ class TodoList extends Component {
   delList  (index)  {
     // let index = e.target.attributes['data-index'].value;
     // 不推荐的写法this.state.list.splice(index, 1)
+    console.log('start');
     let list = [...this.state.list];
     list.splice(index, 1);
+    // this.setState((state, props) => {
+    //   debugger
+    //   return {
+    //     list:list
+    //   }
+    // });
     this.setState({
-      list: list,
+      list
     });
   }
   // delList = (index) => {
