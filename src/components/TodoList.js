@@ -1,83 +1,46 @@
-import React, { Component, Fragment } from 'react';
-import './style.css';
-import TodoItem from './TodoItem';
+import React from 'react';
+import store from '../store/index';
+import actionCreator from '../store/actionCreator';
+import TodoListUI from './TodoListUI';
+import axios from "axios";
 
-class TodoList extends Component {
+class TodoList extends React.Component {
   constructor(props) {
-    // 继承父类
     super(props);
-    // this.delList = this.delList.bind(this);
-    this.state = {
-      inputValue: '',
-      list: [],
-    };
+    this.state = store.getState();
+    // 订阅store
+    store.subscribe(() => this.handleStoreChange());
+  }
+
+  componentDidMount() {
+    axios({
+      url: '/mail/list',
+      type: "get"
+    }).then(res =>{
+      if (res.status === 200) {
+        let list = res.data.data;
+        store.dispatch(actionCreator.getListDataAction(list));
+      }
+    })
+  }
+
+  handleStoreChange() {
+    // 更新state
+    this.setState(store.getState());
+  }
+  handleInputChange(e) {
+    let val = e.target.value;
+    store.dispatch(actionCreator.getInputChangeAction(val));
+  }
+  handleClick() {
+    store.dispatch(actionCreator.btnClickAction(this.state.inputValue));
+  }
+  handleDel(index) {
+    store.dispatch(actionCreator.listDelAction(index));
   }
   render() {
-    const listItem = this.state.list.map((item, index) => {
-      return (
-        <TodoItem key={index} item={item} index={index} delList={() => this.delList()} />
-      );
-    })
-    return (
-      <Fragment>
-        <div>
-          <label htmlFor="inputArea">输入内容</label>
-          {/*注释 className == class*/}
-          <input id="inputArea" className="demoInput" value={this.state.inputValue} onChange={this.handleChange}></input>
-          <button id="btn" onClick={this.pushList}>
-            提交
-          </button>
-        </div>
-        {/* <ul>
-          {this.state.list.map((item, index) => {
-            // return <li key={index} onClick={this.delList} data-index={index} dangerouslySetInnerHTML={{ __html: item }}></li>;
-            return <li key={index} onClick={() => this.delList(index)} dangerouslySetInnerHTML={{ __html: item }}></li>;
-          })}
-        </ul> */}
-        <ul>
-          {listItem}
-        </ul>
-      </Fragment>
-    );
+    return <TodoListUI inputValue={this.state.inputValue} list={this.state.list} handleDel={index => this.handleDel(index)} handleInputChange={e => this.handleInputChange(e)} handleClick={() => this.handleClick()} />;
   }
-  handleChange = e => {
-    this.setState((e) => {
-      debugger
-      return {
-        inputValue: e.target.value,
-      }
-    });
-  };
-  pushList = () => {
-    this.setState({
-      list: [...this.state.list, this.state.inputValue],
-      inputValue: '',
-    });
-  };
-  //Cannot update during an existing state transition (such as within `render`). Render methods should be a pure function of props and state.
-  delList  (index)  {
-    // let index = e.target.attributes['data-index'].value;
-    // 不推荐的写法this.state.list.splice(index, 1)
-    console.log('start');
-    let list = [...this.state.list];
-    list.splice(index, 1);
-    // this.setState((state, props) => {
-    //   debugger
-    //   return {
-    //     list:list
-    //   }
-    // });
-    this.setState({
-      list
-    });
-  }
-  // delList = (index) => {
-  //   debugger
-  //   let list = [...this.state.list];
-  //   list.splice(index, 1);
-  //   this.setState({
-  //     list: list,
-  //   });
-  // };
 }
+
 export default TodoList;

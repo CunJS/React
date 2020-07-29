@@ -8,11 +8,7 @@ class TodoItem extends React.Component {
     };
   }
   render() {
-    return <li onClick={this.handleClick}>{this.state.item}</li>;
-  }
-  handleClick = () => {
-    debugger
-    this.props.delList(this.props.index);
+    return <li onClick={this.props.delList}>{this.state.item}</li>;
   }
 }
 
