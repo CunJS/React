@@ -1,46 +1,67 @@
 import React from 'react';
-import store from '../store/index';
-import actionCreator from '../store/actionCreator';
-import TodoListUI from './TodoListUI';
-import axios from "axios";
+import { connect } from 'react-redux';
+import actions from '../store/actionCreator';
 
-class TodoList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = store.getState();
-    // 订阅store
-    store.subscribe(() => this.handleStoreChange());
-  }
+const mapStateToProps = state => {
+  return {
+    value: state.inputValue,
+    list: state.list,
+  };
+};
 
-  componentDidMount() {
-    axios({
-      url: '/mail/list',
-      type: "get"
-    }).then(res =>{
-      if (res.status === 200) {
-        let list = res.data.data;
-        store.dispatch(actionCreator.getListDataAction(list));
-      }
-    })
-  }
+const mapDispatchToProps = dispatch => {
+  return {
+    inputChange: e => dispatch(actions.getInputChangeAction(e.target.value)),
+    btnClick: value => dispatch(actions.btnClickAction(value)),
+    listClick: index => dispatch(actions.listDelAction(index)),
+  };
+};
 
-  handleStoreChange() {
-    // 更新state
-    this.setState(store.getState());
-  }
-  handleInputChange(e) {
-    let val = e.target.value;
-    store.dispatch(actionCreator.getInputChangeAction(val));
-  }
-  handleClick() {
-    store.dispatch(actionCreator.btnClickAction(this.state.inputValue));
-  }
-  handleDel(index) {
-    store.dispatch(actionCreator.listDelAction(index));
-  }
-  render() {
-    return <TodoListUI inputValue={this.state.inputValue} list={this.state.list} handleDel={index => this.handleDel(index)} handleInputChange={e => this.handleInputChange(e)} handleClick={() => this.handleClick()} />;
-  }
-}
+// todolist组件目前只有dom可以写成函数组件以提升效率；
+// class TodoList extends React.Component {
+//   render() {
+//     const { value, list, inputChange, btnClick, listClick } = this.props;
+//     return (
+//       <div>
+//         <div>
+//           <input onChange={inputChange} value={value}></input>
+//           <button onClick={() => btnClick(value)}>提交ddd</button>
+//         </div>
+//         <ul>
+//           {list.map((item, index) => {
+//             return (
+//               <li key={index} onClick={() => listClick(index)}>
+//                 {item}
+//               </li>
+//             );
+//           })}
+//         </ul>
+//       </div>
+//     );
+//   }
+// }
 
-export default TodoList;
+// ui组件
+const TodoList = props => {
+  const { value, list, inputChange, btnClick, listClick } = props;
+  return (
+    <div>
+      <div>
+        <input onChange={inputChange} value={value}></input>
+        <button onClick={() => btnClick(value)}>提交</button>
+      </div>
+      <ul>
+        {list.map((item, index) => {
+          return (
+            <li key={index} onClick={() => listClick(index)}>
+              {item}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
+
+// 容器组件
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList);

@@ -1,4 +1,5 @@
 import actionTypes from './actionTypes'
+import axios from "axios";
 
 const actionCreator = {
   getInputChangeAction: (val) => ({
@@ -16,7 +17,20 @@ const actionCreator = {
   getListDataAction: (data) => ({
     type: actionTypes.GET_LIST,
     data
-  })
+  }),
+  getTodoList: () => {
+    return (dispatch) => {
+      axios({
+        url: '/mail/list',
+        type: "get"
+      }).then(res =>{
+        if (res.status === 200) {
+          let list = res.data.data;
+          dispatch(actionCreator.getListDataAction(list));
+        }
+      })
+    }
+  }
 }
 
 export default actionCreator;

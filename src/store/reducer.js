@@ -13,7 +13,7 @@ export default (state = defaultState, action) => {
       newState.inputValue = action.value;
       break;
     case actionTypes.BTN_CLICK:
-      newState.list.push({key: action.value});
+      newState.list.push(action.value);
       newState.inputValue = '';
       break;
     case actionTypes.LIST_DEL:
