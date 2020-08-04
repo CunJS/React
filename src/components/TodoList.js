@@ -18,29 +18,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 // todolist组件目前只有dom可以写成函数组件以提升效率；
-// class TodoList extends React.Component {
-//   render() {
-//     const { value, list, inputChange, btnClick, listClick } = this.props;
-//     return (
-//       <div>
-//         <div>
-//           <input onChange={inputChange} value={value}></input>
-//           <button onClick={() => btnClick(value)}>提交ddd</button>
-//         </div>
-//         <ul>
-//           {list.map((item, index) => {
-//             return (
-//               <li key={index} onClick={() => listClick(index)}>
-//                 {item}
-//               </li>
-//             );
-//           })}
-//         </ul>
-//       </div>
-//     );
-//   }
-// }
-
 // ui组件
 const TodoList = props => {
   const { value, list, inputChange, btnClick, listClick } = props;
